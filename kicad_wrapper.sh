@@ -1,17 +1,17 @@
-monitor_list="$(hyprctl monitors all | awk '/Monitor/ {print $2}')"
+monitor_list=$(hyprctl monitors | grep "Monitor" | awk '{print $2}')
 echo "Detected monitors: ${monitor_list}"
 
-for i in "${!monitors[@]}"; do
-    # hyprctl keyword monitor "${monitors[$i]},scale,1.0"
-    hyprctl --batch "keyword monitor $monitor,preferred,auto,1 ; keyword display $monitor scale 1.0"
+for monitor in ${monitor_list}; do
+    echo "Setting scaling for monitor: ${monitor}"
+    hyprctl keyword monitor "${monitor},preferred,auto,1"
 done
 
 
 echo "🚀 Launching program and restoring scaling..."
 (
-    sleep 5
+    sleep 2
     kicad &>/dev/null &
-    sleep 5
+    sleep 20
     hyprctl reload
 ) &
 
